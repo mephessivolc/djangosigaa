@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     # apps,
     'apps.core',
+    'apps.users',
 ]
 
 MIDDLEWARE = [
@@ -111,6 +112,8 @@ AUTHENTICATION_BACKENDS = (
     'apps.core.backends.EmailAuthBackend',
     # 'allauth.account.auth_backends.AuthenticationBackend',
 )
+
+AUTH_USER_MODEL = 'users.Users'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
