@@ -18,24 +18,36 @@ class Users(AbstractBaseUser, PermissionsMixin):
             default=uuid.uuid4,
             editable=False,
         )
+    username = models.CharField('Login', max_length=30, default="", unique=True)
     name = models.CharField('Nome', max_length=150, default='')
     email = models.EmailField('Email', unique=True)
 
     is_staff = models.BooleanField('Equipe', default=False)
     is_active = models.BooleanField('Ativo', default=False)
 
-    date_joined = models.DateTimeField(default=timezone.now)
-    
+    date_joined = models.DateTimeField(auto_now_add=True)
+    date_last_modified = models.DateTimeField(auto_now=True)
 
+<<<<<<< HEAD
     USERNAME_FIELD = 'name'
     REQUIRED_FIELDS = ['email']
+=======
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['name', 'email']
+>>>>>>> users
 
     objects = CustomUserManager()
 
     class Meta:
+<<<<<<< HEAD
         verbose_name = "Usuário"
         verbose_name_plural = "Usuários"
         ordering = ["name"]
+=======
+        verbose_name = 'Usuário'
+        verbose_name_plural = 'Usuários'
+        ordering = ['name']
+>>>>>>> users
 
     def __str__(self) -> str:
         return self.name    

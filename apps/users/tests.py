@@ -1,16 +1,16 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-# Create your tests here.
-from django.contrib.auth import get_user_model
 
 class UsersManagersTests(TestCase):
-    user = User.objects.create_user(id="b34cc8d9-111d-4931-9256-a84c59ab56f9",
-            email='normal@user.com', 
-            password='foo')
-    
+
     def test_create_user(self):
         User = get_user_model()
-        user = self.user
+        user = User.objects.create_user(
+            username="user",
+            email='normal@user.com', 
+            password='foo'
+            )
         self.assertEqual(user.email, 'normal@user.com')
         self.assertFalse(user.is_active)
         self.assertFalse(user.is_staff)
@@ -18,7 +18,7 @@ class UsersManagersTests(TestCase):
         try:
             # username is None for the AbstractUser option
             # username does not exist for the AbstractBaseUser option
-            self.assertIsNone(user.username)
+            self.assertIsNotNone(user.username)
         except AttributeError:
             pass
         with self.assertRaises(TypeError):
@@ -30,15 +30,20 @@ class UsersManagersTests(TestCase):
 
     def test_create_superuser(self):
         User = get_user_model()
-        admin_user = self.user
-        self.assertEqual(admin_user.email, 'normal@user.com')
+        # admin_user = User.objects.create_superuser(email='super@user.com', password='foo')
+        admin_user = User.objects.create_superuser(
+            username="user",
+            email='super@user.com', 
+            password='foo'
+            )
+        self.assertEqual(admin_user.email, 'super@user.com')
         self.assertTrue(admin_user.is_active)
         self.assertTrue(admin_user.is_staff)
         self.assertTrue(admin_user.is_superuser)
         try:
             # username is None for the AbstractUser option
             # username does not exist for the AbstractBaseUser option
-            self.assertIsNone(admin_user.username)
+            self.assertIsNotNone(admin_user.username)
         except AttributeError:
             pass
         with self.assertRaises(ValueError):
