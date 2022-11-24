@@ -15,7 +15,6 @@ class Congress(models.Model):
         verbose_name = "Evento"
         verbose_name_plural = "Eventos"
         ordering = ['date_joined', 'name']
-        # app_label = 'app_congress'
 
     def __str__(self) -> str:
         return f"{self.name}"
