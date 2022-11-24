@@ -1,8 +1,8 @@
 from django.apps import AppConfig
 
 
-class UsersConfig(AppConfig):
+class CongressConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.users'
+    name = 'apps.congress'
 
-    verbose_name = "Usuários"
+    verbose_name = "Eventos"
