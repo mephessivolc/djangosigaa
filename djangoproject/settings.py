@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     # apps,
     'apps.core',
     'apps.users',
+    'apps.congress.apps.CongressConfig',
 ]
 
 MIDDLEWARE = [
