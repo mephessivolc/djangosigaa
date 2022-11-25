@@ -43,6 +43,11 @@ class Users(AbstractBaseUser, PermissionsMixin):
 
 class UsersDocument(models.Model):
 
+    id = models.UUIDField(
+            primary_key=True,
+            default=uuid.uuid4,
+            editable=False,
+        )
     user = models.OneToOneField(Users, on_delete=models.CASCADE)
     number = localflavor_models.BRCPFField("CPF")
 
@@ -53,3 +58,21 @@ class UsersDocument(models.Model):
 
     def __str__(self) -> str:
         return f"{self.number}"
+
+class UsersEmail(models.Model):
+
+    id = models.UUIDField(
+            primary_key=True,
+            default=uuid.uuid4,
+            editable=False,
+        )
+    user = models.OneToOneField(Users, on_delete=models.CASCADE)
+    email = models.EmailField('E-mail alternativo')
+
+    class Meta:
+        verbose_name = 'E-mail alternativo'
+        verbose_name_plural = 'E-mails alternativos'
+        ordering = ['user']
+
+    def __str__(self) -> str:
+        return f"{self.email}"

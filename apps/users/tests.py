@@ -69,3 +69,20 @@ class UsersManagersTests(TestCase):
 
         self.assertEqual(document.user, user)
         self.assertEqual(document.number, number)
+
+    def test_create_alternativeemail(self):
+        User = get_user_model()
+        user = User.objects.create(
+            name = 'Teste de usuário',
+            username = 'teste',
+            email = 'user@email.com',
+            password = 'foo'
+        )
+
+        user_email = user_models.UsersEmail.objects.create(
+            user = user,
+            email = 'email@alternativo.com',
+        )
+
+        self.assertEqual(user_email.user, user)
+        self.assertEqual(user_email.email, 'email@alternativo.com')
