@@ -74,13 +74,15 @@ class CongressManagersTests(TestCase):
         end_date = tmz.now() + tmz.timedelta(days=10)
         enrollment_start_date = tmz.now()
         enrollment_end_date = tmz.now() + tmz.timedelta(days=4)
+        date_for_issuing_certificate = tmz.now() + tmz.timedelta(days=15)
 
         date_congress = DateCongress.objects.create(
             congress = congress,
             start_date = start_date,
             end_date = end_date,
             enrollment_start_date = enrollment_start_date,
-            enrollment_end_date = enrollment_end_date
+            enrollment_end_date = enrollment_end_date,
+            date_for_issuing_certificate = date_for_issuing_certificate
         )
 
         self.assertEqual(date_congress.congress, congress)
@@ -88,3 +90,4 @@ class CongressManagersTests(TestCase):
         self.assertEqual(date_congress.end_date, end_date)
         self.assertEqual(date_congress.enrollment_start_date, enrollment_start_date)
         self.assertEqual(date_congress.enrollment_end_date, enrollment_end_date)
+        self.assertEqual(date_congress.date_for_issuing_certificate, date_for_issuing_certificate)
