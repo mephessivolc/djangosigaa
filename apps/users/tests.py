@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
+from scripts.create_users import create_cpf
+from apps.users import models as user_models
 
 class UsersManagersTests(TestCase):
 
@@ -49,3 +51,21 @@ class UsersManagersTests(TestCase):
         with self.assertRaises(ValueError):
             User.objects.create_superuser(
                 email='super@user.com', password='foo', is_superuser=False)
+
+    def test_create_userdocuments(self):
+        User = get_user_model()
+        user = User.objects.create(
+            name = "Teste de usuário",
+            username = 'Username',
+            email = "user@mail.com",
+            password = 'foo',
+        )
+
+        number = create_cpf()
+        document = user_models.UsersDocument.objects.create(
+            user = user,
+            number = number,
+        )
+
+        self.assertEqual(document.user, user)
+        self.assertEqual(document.number, number)

@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 import re
 import uuid
 
-from localflavor.br.models import BRCPFField, BRCNPJField
+from localflavor.br import models as localflavor_models
 
 from .manager import CustomUserManager
 # Create your models here.
@@ -40,3 +40,16 @@ class Users(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self) -> str:
         return self.name    
+
+class UsersDocument(models.Model):
+
+    user = models.OneToOneField(Users, on_delete=models.CASCADE)
+    number = localflavor_models.BRCPFField("CPF")
+
+    class Meta:
+        verbose_name = 'Documento'
+        verbose_name_plural = 'Documentos'
+        ordering = ['user']
+
+    def __str__(self) -> str:
+        return f"{self.number}"
