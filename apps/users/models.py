@@ -124,7 +124,7 @@ class UserBirth(models.Model):
         default=uuid.uuid4,
         editable=False,
     )
-    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    user = models.OneToOneField(Users, on_delete=models.CASCADE)
     birth_date = models.DateTimeField("Data de Nascimento")
 
     class Meta:
