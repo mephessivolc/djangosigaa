@@ -66,7 +66,7 @@ class UsersEmail(models.Model):
             default=uuid.uuid4,
             editable=False,
         )
-    user = models.OneToOneField(Users, on_delete=models.CASCADE)
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
     email = models.EmailField('E-mail alternativo')
 
     class Meta:
