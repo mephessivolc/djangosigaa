@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
@@ -8,6 +10,11 @@ def day_hence(num=1):
     return timezone.now() + timezone.timedelta(days=num)
 
 class Congress(models.Model):
+    id = models.UUIDField(
+            primary_key=True,
+            default=uuid.uuid4,
+            editable=False,
+        )
     name = models.CharField("Nome", max_length=250, default="")
     short_name = models.CharField("Sigla", max_length=15, default="")
 
@@ -26,6 +33,11 @@ class Congress(models.Model):
         return f"{self.name}"
 
 class DateCongress(models.Model):
+    id = models.UUIDField(
+            primary_key=True,
+            default=uuid.uuid4,
+            editable=False,
+        )
     congress = models.OneToOneField(Congress, on_delete=models.CASCADE)
 
     start_date = models.DateTimeField("Início do Evento", default=day_hence(5))
@@ -45,6 +57,11 @@ class DateCongress(models.Model):
         return f"{self.congress}"
 
 class CongressType(models.Model):
+    id = models.UUIDField(
+            primary_key=True,
+            default=uuid.uuid4,
+            editable=False,
+        )
     name = models.CharField("Nome", max_length=30)
 
     class Meta:
@@ -55,7 +72,11 @@ class CongressType(models.Model):
         return f"{self.name}"
 
 class RelationsCongressTypes(models.Model):
-
+    id = models.UUIDField(
+            primary_key=True,
+            default=uuid.uuid4,
+            editable=False,
+        )
     congress = models.OneToOneField(Congress,
         on_delete=models.CASCADE,
         verbose_name= "Evento"
@@ -66,7 +87,11 @@ class RelationsCongressTypes(models.Model):
         )
 
 class Subscription(models.Model):
-
+    id = models.UUIDField(
+            primary_key=True,
+            default=uuid.uuid4,
+            editable=False,
+        )
     user = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING)
     congress = models.ForeignKey(Congress, on_delete=models.DO_NOTHING)
 
