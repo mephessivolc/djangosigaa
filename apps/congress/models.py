@@ -34,10 +34,15 @@ class DateCongress(models.Model):
     enrollment_start_date = models.DateTimeField("Data de nício das Inscrições", default=timezone.now)
     enrollment_end_date = models.DateTimeField("Data de finalização das Inscrições", default=day_hence(4))
 
+    date_for_issuing_certificate = models.DateTimeField("Data de finalização das Inscrições", default=day_hence(10))
+
     class Meta:
         verbose_name = "Data do Evento"
         verbose_name_plural =  "Datas do Evento"
         ordering = ['congress']
+    
+    def __str__(self) -> str:
+        return f"{self.congress}"
 
 class CongressType(models.Model):
     name = models.CharField("Nome", max_length=30)
