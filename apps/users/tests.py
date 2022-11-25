@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.utils import timezone as tmz
 
 from scripts.create_users import create_cpf
 from apps.users import models as user_models
@@ -86,3 +87,58 @@ class UsersManagersTests(TestCase):
 
         self.assertEqual(user_email.user, user)
         self.assertEqual(user_email.email, 'email@alternativo.com')
+
+    def test_create_city(self):
+        city = user_models.City.objects.create(
+            name = "Cidade",
+        )
+
+        self.assertEqual(city.name, "Cidade")
+
+    def test_create_address(self):
+        User = get_user_model()
+        user = User.objects.create(
+            name = 'Teste de usuário',
+            username = 'teste',
+            email = 'user@email.com',
+            password = 'foo'
+        )
+
+        city = user_models.City.objects.create(
+            name = "teste de nome de cidade",
+        )
+
+        address = user_models.UserAddress.objects.create(
+            user = user,
+            city = city,
+            public_place = "Teste de Endereço",
+            number = "1809",
+            district = "bairro",
+            complement = "complemento",
+            cep = '12345-678',
+        )
+
+        self.assertEqual(address.user, user)
+        self.assertEqual(address.city, city)
+        self.assertEqual(address.public_place,"Teste de Endereço")
+        self.assertEqual(address.number,"1809")
+        self.assertEqual(address.district, "bairro")
+        self.assertEqual(address.complement, "complemento")
+        self.assertEqual(address.cep, "12345-678")
+
+    def test_create_birthday(self):
+        User = get_user_model()
+        user = User.objects.create(
+            name = 'Teste de usuário',
+            username = 'teste',
+            email = 'user@email.com',
+            password = 'foo'
+        )
+        timezone = tmz.now()
+        birthdate = user_models.UserBirth.objects.create(
+            user = user,
+            birth_date = timezone
+        )
+
+        self.assertEqual(birthdate.user, user)
+        self.assertEqual(birthdate.birth_date, timezone)

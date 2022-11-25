@@ -76,3 +76,61 @@ class UsersEmail(models.Model):
 
     def __str__(self) -> str:
         return f"{self.email}"
+
+class City(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    name = models.CharField("Cidade", max_length=200)
+
+    class Meta:
+        verbose_name = 'Cidade'
+        verbose_name_plural = 'Cidades'
+        ordering = ['name']
+
+    def __str__(self) -> str:
+        return f"{self.name}"
+
+
+class UserAddress(models.Model):
+    
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    public_place = models.CharField("Endereço", max_length=200, default="")
+    number = models.CharField('Numero', max_length=50)
+    district = models.CharField("Bairro", max_length=50)
+    complement = models.CharField("Complemento", max_length=150)
+    cep = models.CharField("CEP", max_length=10)
+    city = models.ForeignKey(City, on_delete=models.DO_NOTHING)
+
+    class Meta:
+        verbose_name = "Endereço"
+        verbose_name_plural = "Endereços"
+        ordering = ['user']
+
+    def __str__(self) -> str:
+        return f"{self.user}"
+
+class UserBirth(models.Model):
+
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    birth_date = models.DateTimeField("Data de Nascimento")
+
+    class Meta:
+        verbose_name = "Data de Nascimento"
+        verbose_name_plural = "Datas de Nascimentos"
+        ordering = ['user']
+
+    def __str__(self) -> str:
+        return f"{self.user}"
