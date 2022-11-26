@@ -1,9 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, UserManager, PermissionsMixin
-from django.utils import timezone
+from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
 
-import re
 import uuid
 
 from localflavor.br import models as localflavor_models
@@ -11,6 +10,10 @@ from localflavor.br import models as localflavor_models
 from .manager import CustomUserManager
 # Create your models here.
 
+def upload_location(instance, filename):
+    filebase, extension = filename.split(".")
+    name = slugify(uuid.uuid5(uuid.NAMESPACE_URL, filebase))
+    return f"images/{name}.{extension}"
 
 class Users(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
@@ -135,6 +138,7 @@ class UserBirth(models.Model):
     def __str__(self) -> str:
         return f"{self.user}"
 
+
 class UserImage(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -142,7 +146,7 @@ class UserImage(models.Model):
         editable=False,
     )
     user = models.OneToOneField(Users, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="images/")
+    image = models.ImageField(upload_to=upload_location)
 
     class Meta:
         verbose_name = "Imagem"

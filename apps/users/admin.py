@@ -9,3 +9,4 @@ class UserAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Users, UserAdmin)
 admin.site.register(models.UsersDocument)
+admin.site.register(models.UserImage)
