@@ -134,3 +134,20 @@ class UserBirth(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user}"
+
+class UserImage(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    user = models.OneToOneField(Users, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="images/")
+
+    class Meta:
+        verbose_name = "Imagem"
+        verbose_name = "Imagens"
+        ordering = ['user']
+
+    def __str__(self) -> str:
+        return f"{self.user}"
