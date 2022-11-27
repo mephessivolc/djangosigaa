@@ -40,6 +40,7 @@ class Users(AbstractBaseUser, PermissionsMixin):
             default="", 
             unique=True
         )
+    document = localflavor_models.BRCPFField("CPF", unique=True)
     name = models.CharField('Nome', max_length=150, default='')
     email = models.EmailField('Email', unique=True)
 
@@ -64,25 +65,12 @@ class Users(AbstractBaseUser, PermissionsMixin):
 
     def save(self, *args, **kwargs) -> None:
         if not self.slug:
-            self.slug = slugify(f"{str(self.id).split('-')[0]} {self.name}")
+            self.slug = slugify(f"{str(self.id).split('-')[0]} {self.name}")[:170]
         
         if not self.registration:
-            self.registration = f"{timezone.now().year}{random_number(3)}{random_number(3).zfill(5)}"
+            self.registration = f"{timezone.now().year}{str(self.document)[:3]}{random_number(3).zfill(5)}"
         
         return super(Users, self).save(*args, **kwargs)
-
-class Document(Common):
-
-    user = models.OneToOneField(Users, on_delete=models.CASCADE)
-    number = localflavor_models.BRCPFField("CPF")
-
-    class Meta:
-        verbose_name = 'Documento'
-        verbose_name_plural = 'Documentos'
-        ordering = ['user']
-
-    def __str__(self) -> str:
-        return f"{self.number}"
 
 class AlternativeEmail(Common):
 

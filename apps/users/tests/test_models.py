@@ -6,7 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 
 from scripts.create_users import create_cpf
-from scripts.create_random import create_random_strings
+from scripts.create_random import create_random_strings, random_number
 
 from apps.users import models as user_models
 
@@ -15,18 +15,32 @@ class UsersManagersTests(TestCase):
     def setUp(self):
 
         self.User = get_user_model()
+        self.document = create_cpf()
+        self.admin_document = create_cpf()
+        self.name = create_random_strings(180)
+        self.registration = f"{tmz.now().year}{self.document[:3]}{random_number(3).zfill(5)}"
+        self.admin_registration = f"{tmz.now().year}{self.document[:3]}{random_number(3).zfill(5)}"
+
         self.user = self.User.objects.create_user(
             email='normal@user.com', 
-            password='foo'
+            name = self.name,
+            password='foo',
+            document=self.document,
+            registration = self.registration,
             )
+        self.user.save()
         self.admin_user = self.User.objects.create_superuser(
             email='super@user.com', 
-            password='foo'
+            name = self.name,
+            password='foo',
+            document=self.admin_document,
+            registration = self.admin_registration,
             )
             
     def test_create_user(self):
         
         self.assertEqual(self.user.email, 'normal@user.com')
+        self.assertEqual(self.user.document, self.document)
         self.assertFalse(self.user.is_active)
         self.assertFalse(self.user.is_staff)
         self.assertFalse(self.user.is_superuser)
@@ -46,6 +60,7 @@ class UsersManagersTests(TestCase):
     def test_create_superuser(self):
                
         self.assertEqual(self.admin_user.email, 'super@user.com')
+        self.assertEqual(self.admin_user.document, self.admin_document)
         self.assertTrue(self.admin_user.is_active)
         self.assertTrue(self.admin_user.is_staff)
         self.assertTrue(self.admin_user.is_superuser)
@@ -64,39 +79,8 @@ class UsersManagersTests(TestCase):
         self.assertTrue(len(self.user.registration) <= 12)
         self.assertTrue(len(self.user.slug) <= 170)
     
-    def test_len_slug(self):
-        name = slugify(create_random_strings(180))
-        user = self.User.objects.create(
-            name = name,
-            email = "teste@email.com",
-            password = "foo"
-        )
-        user.save()
-
-        user = self.User.objects.first()
-
-        self.assertFalse(len(user.slug) > 170)
-
-        user.delete()
-
-class DocumentsManagersTests(TestCase):
-
-    def setUp(self):
-        self.User = get_user_model()
-        self.user = self.User.objects.create_user(
-            email='normal@user.com', 
-            password='foo'
-            )
-
-    def test_create_userdocuments(self):
-        number = create_cpf()
-        document = user_models.Document.objects.create(
-            user = self.user,
-            number = number,
-        )
-
-        self.assertEqual(document.user, self.user)
-        self.assertEqual(document.number, number)
+    def test_create_registration_number(self):
+        self.assertEqual(self.user.registration, self.registration)
 
 class AlternativeEmailManagersTests(TestCase):
 

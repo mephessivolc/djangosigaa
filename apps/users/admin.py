@@ -8,5 +8,4 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ("name", "slug", "email")
 
 admin.site.register(models.Users, UserAdmin)
-admin.site.register(models.Document)
 admin.site.register(models.Image)
