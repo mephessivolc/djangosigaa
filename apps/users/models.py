@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.template.defaultfilters import slugify
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from scripts.create_random import random_number
 import uuid
 
 from localflavor.br import models as localflavor_models
@@ -10,10 +12,21 @@ from localflavor.br import models as localflavor_models
 from .manager import CustomUserManager
 # Create your models here.
 
+
 def upload_location(instance, filename):
     filebase, extension = filename.split(".")
     name = slugify(uuid.uuid5(uuid.NAMESPACE_URL, filebase))
     return f"images/{name}.{extension}"
+
+class Common(models.Model):
+    id = models.UUIDField(
+            primary_key=True,
+            default=uuid.uuid4,
+            editable=False,
+        )
+
+    class Meta:
+        abstract = True
 
 class Users(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
@@ -21,7 +34,12 @@ class Users(AbstractBaseUser, PermissionsMixin):
             default=uuid.uuid4,
             editable=False,
         )
-    username = models.CharField('Login', max_length=30, default="", unique=True)
+    slug = models.SlugField('Login', max_length=170, default="", unique=True, editable=False)
+    registration = models.CharField('Número Matrícula', 
+            max_length=12, 
+            default="", 
+            unique=True
+        )
     name = models.CharField('Nome', max_length=150, default='')
     email = models.EmailField('Email', unique=True)
 
@@ -31,7 +49,7 @@ class Users(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(auto_now_add=True)
     date_last_modified = models.DateTimeField(auto_now=True)
 
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'slug'
     REQUIRED_FIELDS = ['name', 'email']
 
     objects = CustomUserManager()
@@ -44,13 +62,17 @@ class Users(AbstractBaseUser, PermissionsMixin):
     def __str__(self) -> str:
         return self.name    
 
-class UsersDocument(models.Model):
+    def save(self, *args, **kwargs) -> None:
+        if not self.slug:
+            self.slug = slugify(f"{str(self.id).split('-')[0]} {self.name}")
+        
+        if not self.registration:
+            self.registration = f"{timezone.now().year}{random_number(3)}{random_number(3).zfill(5)}"
+        
+        return super(Users, self).save(*args, **kwargs)
 
-    id = models.UUIDField(
-            primary_key=True,
-            default=uuid.uuid4,
-            editable=False,
-        )
+class Document(Common):
+
     user = models.OneToOneField(Users, on_delete=models.CASCADE)
     number = localflavor_models.BRCPFField("CPF")
 
@@ -62,13 +84,8 @@ class UsersDocument(models.Model):
     def __str__(self) -> str:
         return f"{self.number}"
 
-class UsersEmail(models.Model):
+class AlternativeEmail(Common):
 
-    id = models.UUIDField(
-            primary_key=True,
-            default=uuid.uuid4,
-            editable=False,
-        )
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
     email = models.EmailField('E-mail alternativo')
 
@@ -80,12 +97,8 @@ class UsersEmail(models.Model):
     def __str__(self) -> str:
         return f"{self.email}"
 
-class City(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
+class City(Common):
+    
     name = models.CharField("Cidade", max_length=200)
 
     class Meta:
@@ -97,13 +110,8 @@ class City(models.Model):
         return f"{self.name}"
 
 
-class UserAddress(models.Model):
+class Address(Common):
     
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
     public_place = models.CharField("Endereço", max_length=200, default="")
     number = models.CharField('Numero', max_length=50)
@@ -120,13 +128,8 @@ class UserAddress(models.Model):
     def __str__(self) -> str:
         return f"{self.user}"
 
-class UserBirth(models.Model):
+class BirthDay(Common):
 
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
     user = models.OneToOneField(Users, on_delete=models.CASCADE)
     birth_date = models.DateTimeField("Data de Nascimento")
 
@@ -139,12 +142,8 @@ class UserBirth(models.Model):
         return f"{self.user}"
 
 
-class UserImage(models.Model):
-    id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-    )
+class Image(Common):
+    
     user = models.OneToOneField(Users, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=upload_location)
 
