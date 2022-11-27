@@ -91,8 +91,8 @@ class Subscription(models.Model):
             default=uuid.uuid4,
             editable=False,
         )
-    user = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING)
-    congress = models.ForeignKey(Congress, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    congress = models.ForeignKey(Congress, on_delete=models.CASCADE)
 
     date_joined = models.DateTimeField("Data de inscrição", auto_now_add=True)
 
