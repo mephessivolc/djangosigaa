@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone as tmz
 from django.template.defaultfilters import slugify
@@ -17,7 +18,7 @@ class UsersManagersTests(TestCase):
         self.User = get_user_model()
         self.document = create_cpf()
         self.admin_document = create_cpf()
-        self.name = create_random_strings(180)
+        self.name = create_random_strings(140)
         self.registration = f"{tmz.now().year}{self.document[:3]}{random_number(3).zfill(5)}"
         self.admin_registration = f"{tmz.now().year}{self.document[:3]}{random_number(3).zfill(5)}"
 
@@ -77,7 +78,6 @@ class UsersManagersTests(TestCase):
     def test_len_is_equal_or_minus(self):
 
         self.assertTrue(len(self.user.registration) <= 12)
-        self.assertTrue(len(self.user.slug) <= 170)
     
     def test_create_registration_number(self):
         self.assertEqual(self.user.registration, self.registration)
