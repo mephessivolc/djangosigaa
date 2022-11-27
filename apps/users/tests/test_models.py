@@ -77,7 +77,7 @@ class UsersDocumentsManagersTests(TestCase):
         self.assertEqual(document.user, self.user)
         self.assertEqual(document.number, number)
 
-class UsersAleternativeEmailManagersTests(TestCase):
+class UsersAlternativeEmailManagersTests(TestCase):
 
     def setUp(self):
         self.User = get_user_model()
