@@ -3,17 +3,28 @@ import uuid
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+from django.template.defaultfilters import slugify
 
 # Create your models here.
 
 def day_hence(num=1):
     return timezone.now() + timezone.timedelta(days=num)
 
-class Congress(models.Model):
+class Common(models.Model):
     id = models.UUIDField(
             primary_key=True,
             default=uuid.uuid4,
             editable=False,
+        )
+
+    class Meta:
+        abstract = True 
+
+class Congress(Common):
+
+    slug = models.SlugField("Identificador", 
+            max_length=20, 
+            default="",
         )
     name = models.CharField("Nome", max_length=250, default="")
     short_name = models.CharField("Sigla", max_length=15, default="")
@@ -31,12 +42,14 @@ class Congress(models.Model):
     def __str__(self) -> str:
         return f"{self.name}"
 
-class DateCongress(models.Model):
-    id = models.UUIDField(
-            primary_key=True,
-            default=uuid.uuid4,
-            editable=False,
-        )
+    def save(self, *args, **kwargs) -> None:
+        if not self.slug:
+            self.slug = slugify(f"{timezone.now().year} {self.short_name}")
+
+        return super(Congress, self).save(*args, **kwargs)
+
+class DateCongress(Common):
+    
     congress = models.OneToOneField(Congress, on_delete=models.CASCADE)
 
     start_date = models.DateTimeField("Início do Evento", default=day_hence(5))
@@ -55,12 +68,8 @@ class DateCongress(models.Model):
     def __str__(self) -> str:
         return f"{self.congress}"
 
-class CongressType(models.Model):
-    id = models.UUIDField(
-            primary_key=True,
-            default=uuid.uuid4,
-            editable=False,
-        )
+class CongressType(Common):
+    
     name = models.CharField("Nome", max_length=30)
 
     class Meta:
@@ -70,12 +79,8 @@ class CongressType(models.Model):
     def __str__(self) -> str:
         return f"{self.name}"
 
-class RelationsCongressTypes(models.Model):
-    id = models.UUIDField(
-            primary_key=True,
-            default=uuid.uuid4,
-            editable=False,
-        )
+class RelationsCongressTypes(Common):
+    
     congress = models.OneToOneField(Congress,
         on_delete=models.CASCADE,
         verbose_name= "Evento"
@@ -85,12 +90,7 @@ class RelationsCongressTypes(models.Model):
         on_delete=models.CASCADE
         )
 
-class Subscription(models.Model):
-    id = models.UUIDField(
-            primary_key=True,
-            default=uuid.uuid4,
-            editable=False,
-        )
+class Subscription(Common):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     congress = models.ForeignKey(Congress, on_delete=models.CASCADE)
 
@@ -99,7 +99,22 @@ class Subscription(models.Model):
     class Meta:
         verbose_name = "Inscrito"
         verbose_name_plural = "Inscritos"
-        ordering = ['user', 'congress']
+        ordering = ['-date_joined', 'user', 'congress']
 
     def __str__(self) -> str:
-        return f"{self.users} - {self.congress.short_name}"
+        return f"{self.users} [{self.congress.short_name}]"
+
+class Staffs(Common):
+
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    congress = models.ForeignKey(Congress, on_delete=models.CASCADE)
+
+    date_joined = models.DateTimeField("Data de inscrição", auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Organizador'
+        verbose_name_plural = 'Organizadores'
+        ordering = ['-date_joined', 'user', 'congress']
+
+    def __str__(self) -> str:
+        return f"{self.users} [{self.congress.short_name}]"
