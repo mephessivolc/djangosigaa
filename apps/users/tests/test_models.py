@@ -1,23 +1,25 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone as tmz
+from django.template.defaultfilters import slugify
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 
 from scripts.create_users import create_cpf
+from scripts.create_random import create_random_strings
+
 from apps.users import models as user_models
 
 class UsersManagersTests(TestCase):
 
     def setUp(self):
+
         self.User = get_user_model()
         self.user = self.User.objects.create_user(
-            username="user",
             email='normal@user.com', 
             password='foo'
             )
         self.admin_user = self.User.objects.create_superuser(
-            username="admin_user",
             email='super@user.com', 
             password='foo'
             )
@@ -56,20 +58,39 @@ class UsersManagersTests(TestCase):
         with self.assertRaises(ValueError):
             self.User.objects.create_superuser(
                 email='super@user.com', password='foo', is_superuser=False)
+    
+    def test_len_is_equal_or_minus(self):
 
-class UsersDocumentsManagersTests(TestCase):
+        self.assertTrue(len(self.user.registration) <= 12)
+        self.assertTrue(len(self.user.slug) <= 170)
+    
+    def test_len_slug(self):
+        name = slugify(create_random_strings(180))
+        user = self.User.objects.create(
+            name = name,
+            email = "teste@email.com",
+            password = "foo"
+        )
+        user.save()
+
+        user = self.User.objects.first()
+
+        self.assertFalse(len(user.slug) > 170)
+
+        user.delete()
+
+class DocumentsManagersTests(TestCase):
 
     def setUp(self):
         self.User = get_user_model()
         self.user = self.User.objects.create_user(
-            username="user",
             email='normal@user.com', 
             password='foo'
             )
 
     def test_create_userdocuments(self):
         number = create_cpf()
-        document = user_models.UsersDocument.objects.create(
+        document = user_models.Document.objects.create(
             user = self.user,
             number = number,
         )
@@ -77,18 +98,17 @@ class UsersDocumentsManagersTests(TestCase):
         self.assertEqual(document.user, self.user)
         self.assertEqual(document.number, number)
 
-class UsersAlternativeEmailManagersTests(TestCase):
+class AlternativeEmailManagersTests(TestCase):
 
     def setUp(self):
         self.User = get_user_model()
         self.user = self.User.objects.create_user(
-            username="user",
             email='normal@user.com', 
             password='foo'
             )
 
     def test_create_alternativeemail(self):
-        user_email = user_models.UsersEmail.objects.create(
+        user_email = user_models.AlternativeEmail.objects.create(
             user = self.user,
             email = 'email@alternativo.com',
         )
@@ -101,7 +121,6 @@ class CityManagersTests(TestCase):
     def setUp(self):
         self.User = get_user_model()
         self.user = self.User.objects.create_user(
-            username="user",
             email='normal@user.com', 
             password='foo'
             )
@@ -118,7 +137,7 @@ class CityManagersTests(TestCase):
             name = "teste de nome de cidade",
         )
 
-        address = user_models.UserAddress.objects.create(
+        address = user_models.Address.objects.create(
             user = self.user,
             city = city,
             public_place = "Teste de Endereço",
@@ -141,7 +160,6 @@ class UsersBirthdayManagersTests(TestCase):
     def setUp(self):
         self.User = get_user_model()
         self.user = self.User.objects.create_user(
-            username="user",
             email='normal@user.com', 
             password='foo'
             )
@@ -149,7 +167,7 @@ class UsersBirthdayManagersTests(TestCase):
     def test_create_birthday(self):
         
         timezone = tmz.now()
-        birthdate = user_models.UserBirth.objects.create(
+        birthdate = user_models.BirthDay.objects.create(
             user = self.user,
             birth_date = timezone
         )
