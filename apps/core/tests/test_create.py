@@ -7,6 +7,7 @@ class CoreManagersTests(TestCase):
 
     @classmethod
     def setUpTestData(self):
+        print("Teste do app core")
         self.institute = models.Institute.objects.create(
             name = "Nome de Instiução",
             short_name = "NI"
