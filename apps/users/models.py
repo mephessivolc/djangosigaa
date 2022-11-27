@@ -150,7 +150,7 @@ class UserImage(models.Model):
 
     class Meta:
         verbose_name = "Imagem"
-        verbose_name = "Imagens"
+        verbose_name_plural = "Imagens"
         ordering = ['user']
 
     def __str__(self) -> str:
