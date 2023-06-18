@@ -58,19 +58,6 @@ class Users(AbstractBaseUser, PermissionsMixin):
         
         return super(Users, self).save(*args, **kwargs)
 
-class AlternativeEmail(CoreCommon):
-
-    user = models.ForeignKey(Users, on_delete=models.CASCADE)
-    email = models.EmailField('E-mail alternativo')
-
-    class Meta:
-        verbose_name = 'E-mail alternativo'
-        verbose_name_plural = 'E-mails alternativos'
-        ordering = ['user']
-
-    def __str__(self) -> str:
-        return f"{self.email}"
-
 class City(CoreCommon):
     
     name = models.CharField("Cidade", max_length=200)
@@ -82,7 +69,6 @@ class City(CoreCommon):
 
     def __str__(self) -> str:
         return f"{self.name}"
-
 
 class Address(CoreCommon):
     
