@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.congress.apps.CongressConfig',
     'apps.cities.apps.CitiesConfig',
     'apps.institute.apps.InstituteConfig',
+    'apps.professors',
 ]
 
 MIDDLEWARE = [
