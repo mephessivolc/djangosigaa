@@ -58,35 +58,6 @@ class Users(AbstractBaseUser, PermissionsMixin):
         
         return super(Users, self).save(*args, **kwargs)
 
-class City(CoreCommon):
-    
-    name = models.CharField("Cidade", max_length=200)
-
-    class Meta:
-        verbose_name = 'Cidade'
-        verbose_name_plural = 'Cidades'
-        ordering = ['name']
-
-    def __str__(self) -> str:
-        return f"{self.name}"
-
-class Address(CoreCommon):
-    
-    user = models.ForeignKey(Users, on_delete=models.CASCADE)
-    public_place = models.CharField("Endereço", max_length=200, default="")
-    number = models.CharField('Numero', max_length=50)
-    district = models.CharField("Bairro", max_length=50)
-    complement = models.CharField("Complemento", max_length=150)
-    cep = models.CharField("CEP", max_length=10)
-
-    class Meta:
-        verbose_name = "Endereço"
-        verbose_name_plural = "Endereços"
-        ordering = ['user']
-
-    def __str__(self) -> str:
-        return f"{self.user}"
-
 class BirthDay(CoreCommon):
 
     user = models.OneToOneField(Users, on_delete=models.CASCADE)
