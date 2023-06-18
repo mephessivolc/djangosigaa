@@ -23,7 +23,7 @@ class CitiesModel(CoreCommon):
                               on_delete=models.CASCADE,
                               verbose_name='Estado'
                               )
-    name = models.CharField("Nome", max_length=80)
+    name = models.CharField("Nome", max_length=150)
 
     class Meta:
         verbose_name = "Estado"
@@ -37,9 +37,9 @@ class Address(CoreCommon):
     
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     public_place = models.CharField("Endereço", max_length=200, default="")
-    number = models.CharField('Numero', max_length=50)
-    district = models.CharField("Bairro", max_length=50)
-    complement = models.CharField("Complemento", max_length=150)
+    number = models.CharField('Numero', max_length=10)
+    district = models.CharField("Bairro", max_length=100)
+    complement = models.CharField("Complemento", max_length=150, blank=True, null=True)
     cep = models.CharField("CEP", max_length=10)
     city = models.ForeignKey(CitiesModel, 
                              on_delete=models.CASCADE, 
@@ -53,3 +53,12 @@ class Address(CoreCommon):
 
     def __str__(self) -> str:
         return f"{self.user}"
+    
+    def get_full_address(self):
+        response = f"End: {self.public_place}, {self.number}"
+        if self.complement:
+            response = response + f", {self.complement}"
+        response = response + f". Bairro: {self.district}, CEP: {self.cep}."
+        response = response + f"{self.city.name} - {self.city.state.acronym}"
+
+        return response
