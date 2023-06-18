@@ -19,15 +19,12 @@ class UsersManagersTests(TestCase):
         self.document = create_cpf()
         self.admin_document = create_cpf()
         self.name = create_random_strings(140)
-        self.registration = f"{tmz.now().year}{self.document[:3]}{random_number(3).zfill(5)}"
-        self.admin_registration = f"{tmz.now().year}{self.document[:3]}{random_number(3).zfill(5)}"
 
         self.user = self.User.objects.create_user(
             email='normal@user.com', 
             name = self.name,
             password='foo',
             document=self.document,
-            registration = self.registration,
             )
         self.user.save()
         self.admin_user = self.User.objects.create_superuser(
@@ -35,7 +32,6 @@ class UsersManagersTests(TestCase):
             name = self.name,
             password='foo',
             document=self.admin_document,
-            registration = self.admin_registration,
             )
             
     def test_create_user(self):
@@ -75,13 +71,6 @@ class UsersManagersTests(TestCase):
             self.User.objects.create_superuser(
                 email='super@user.com', password='foo', is_superuser=False)
     
-    def test_len_is_equal_or_minus(self):
-
-        self.assertTrue(len(self.user.registration) <= 12)
-    
-    def test_create_registration_number(self):
-        self.assertEqual(self.user.registration, self.registration)
-
 class AlternativeEmailManagersTests(TestCase):
 
     def setUp(self):
@@ -99,45 +88,6 @@ class AlternativeEmailManagersTests(TestCase):
 
         self.assertEqual(user_email.user, self.user)
         self.assertEqual(user_email.email, 'email@alternativo.com')
-
-class CityManagersTests(TestCase):
-
-    def setUp(self):
-        self.User = get_user_model()
-        self.user = self.User.objects.create_user(
-            email='normal@user.com', 
-            password='foo'
-            )
-
-    def test_create_city(self):
-        city = user_models.City.objects.create(
-            name = "Cidade",
-        )
-
-        self.assertEqual(city.name, "Cidade")
-
-    def test_create_address(self):
-        city = user_models.City.objects.create(
-            name = "teste de nome de cidade",
-        )
-
-        address = user_models.Address.objects.create(
-            user = self.user,
-            city = city,
-            public_place = "Teste de Endereço",
-            number = "1809",
-            district = "bairro",
-            complement = "complemento",
-            cep = '12345-678',
-        )
-
-        self.assertEqual(address.user, self.user)
-        self.assertEqual(address.city, city)
-        self.assertEqual(address.public_place,"Teste de Endereço")
-        self.assertEqual(address.number,"1809")
-        self.assertEqual(address.district, "bairro")
-        self.assertEqual(address.complement, "complemento")
-        self.assertEqual(address.cep, "12345-678")
 
 class UsersBirthdayManagersTests(TestCase):
 

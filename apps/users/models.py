@@ -10,6 +10,8 @@ import uuid
 from localflavor.br import models as localflavor_models
 
 from .manager import CustomUserManager
+
+from apps.core.models import Common as CoreCommon
 # Create your models here.
 
 
@@ -18,16 +20,6 @@ def upload_location(instance, filename):
     name = slugify(uuid.uuid5(uuid.NAMESPACE_URL, filebase))
     return f"images/{name}.{extension}"
 
-class Common(models.Model):
-    id = models.UUIDField(
-            primary_key=True,
-            default=uuid.uuid4,
-            editable=False,
-        )
-
-    class Meta:
-        abstract = True
-
 class Users(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(
             primary_key=True,
@@ -35,12 +27,9 @@ class Users(AbstractBaseUser, PermissionsMixin):
             editable=False,
         )
     slug = models.SlugField('Login', max_length=170, default="", unique=True, editable=False)
-    registration = models.CharField('Número Matrícula', 
-            max_length=12, 
-            default="", 
-            unique=True
-        )
+
     document = localflavor_models.BRCPFField("CPF", unique=True)
+    
     name = models.CharField('Nome', max_length=150, default='')
     email = models.EmailField('Email', unique=True)
 
@@ -67,12 +56,9 @@ class Users(AbstractBaseUser, PermissionsMixin):
         if not self.slug:
             self.slug = slugify(f"{str(self.id).split('-')[0]} {self.name}")[:170]
         
-        if not self.registration:
-            self.registration = f"{timezone.now().year}{str(self.document)[:3]}{random_number(3).zfill(5)}"
-        
         return super(Users, self).save(*args, **kwargs)
 
-class AlternativeEmail(Common):
+class AlternativeEmail(CoreCommon):
 
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
     email = models.EmailField('E-mail alternativo')
@@ -85,7 +71,7 @@ class AlternativeEmail(Common):
     def __str__(self) -> str:
         return f"{self.email}"
 
-class City(Common):
+class City(CoreCommon):
     
     name = models.CharField("Cidade", max_length=200)
 
@@ -98,7 +84,7 @@ class City(Common):
         return f"{self.name}"
 
 
-class Address(Common):
+class Address(CoreCommon):
     
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
     public_place = models.CharField("Endereço", max_length=200, default="")
@@ -106,7 +92,6 @@ class Address(Common):
     district = models.CharField("Bairro", max_length=50)
     complement = models.CharField("Complemento", max_length=150)
     cep = models.CharField("CEP", max_length=10)
-    city = models.ForeignKey(City, on_delete=models.DO_NOTHING)
 
     class Meta:
         verbose_name = "Endereço"
@@ -116,7 +101,7 @@ class Address(Common):
     def __str__(self) -> str:
         return f"{self.user}"
 
-class BirthDay(Common):
+class BirthDay(CoreCommon):
 
     user = models.OneToOneField(Users, on_delete=models.CASCADE)
     birth_date = models.DateTimeField("Data de Nascimento")
@@ -130,7 +115,7 @@ class BirthDay(Common):
         return f"{self.user}"
 
 
-class Image(Common):
+class Image(CoreCommon):
     
     user = models.OneToOneField(Users, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=upload_location)
