@@ -3,7 +3,7 @@ from django.test import TestCase
 
 from scripts.create_users import create_cpf
 
-from apps.cities.models import StatesModel, CitiesModel, Address
+from apps.address.models import StatesModel, CitiesModel, Address
 
 class StatesManagersTests(TestCase):
     
