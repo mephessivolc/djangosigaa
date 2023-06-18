@@ -71,24 +71,6 @@ class UsersManagersTests(TestCase):
             self.User.objects.create_superuser(
                 email='super@user.com', password='foo', is_superuser=False)
     
-class AlternativeEmailManagersTests(TestCase):
-
-    def setUp(self):
-        self.User = get_user_model()
-        self.user = self.User.objects.create_user(
-            email='normal@user.com', 
-            password='foo'
-            )
-
-    def test_create_alternativeemail(self):
-        user_email = user_models.AlternativeEmail.objects.create(
-            user = self.user,
-            email = 'email@alternativo.com',
-        )
-
-        self.assertEqual(user_email.user, self.user)
-        self.assertEqual(user_email.email, 'email@alternativo.com')
-
 class UsersBirthdayManagersTests(TestCase):
 
     def setUp(self):
