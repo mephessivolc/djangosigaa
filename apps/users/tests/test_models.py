@@ -1,10 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone as tmz
-from django.template.defaultfilters import slugify
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.conf import settings
 
 from scripts.create_users import create_cpf
 from scripts.create_random import create_random_strings, random_number
