@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'apps.address',
     'apps.institute.apps.InstituteConfig',
     'apps.professors',
+    'apps.students',
 ]
 
 MIDDLEWARE = [
