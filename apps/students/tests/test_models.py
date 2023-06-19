@@ -28,7 +28,7 @@ class UsersManagersTests(TestCase):
         self.course = Courses.objects.create(
             short_name = "Curso",
             departament = departament,
-            number = "123"
+            number = "0123"
         )
 
         self.registration = random_number(5)

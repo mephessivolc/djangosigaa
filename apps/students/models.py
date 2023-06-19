@@ -15,7 +15,7 @@ def create_registration_number(reg, number):
 
 class StudentsModel(User):
 
-    registration = models.CharField("Registro", max_length=12, default=random_number(5))
+    registration = models.CharField("Registro", max_length=13, default=random_number(5))
     course = models.ForeignKey(Courses, on_delete=models.CASCADE, verbose_name='Curso')
 
     class Meta:
