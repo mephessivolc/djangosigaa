@@ -2,6 +2,8 @@ from django.db import models
 from django.template.defaultfilters import slugify
 import uuid
 
+from scripts.create_random import random_number
+
 from apps.core.models import Common as CoreCommon
 # Create your models here.
 class Common(CoreCommon):
@@ -46,6 +48,7 @@ class Courses(Common):
 
     short_name = models.CharField("Sigla", max_length=10)
     departament = models.ForeignKey(Departaments, on_delete=models.CASCADE)
+    number = models.CharField("Numero de Referencia", max_length=4, default="0000")
 
     class Meta:
         verbose_name = "Curso"
@@ -53,4 +56,10 @@ class Courses(Common):
 
     def __str__(self) -> str:
         return f"{self.name}"
+    
+    def save(self, *args, **kwargs):
+        if not self.number:
+            self.number = random_number(4).zfill(4)
+        
+        return super().save(*args, **kwargs)
 
