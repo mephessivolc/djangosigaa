@@ -5,9 +5,8 @@ from scripts.create_random import random_number
 # Create your models here.
 
 Users = get_user_model()
-class ProfessorsModels(models.Model):
+class ProfessorsModels(Users):
 
-    users = models.OneToOneField(Users, on_delete=models.CASCADE)
     registration = models.CharField("Numero de Registro", max_length=10, unique=True, blank=True, null=True)
 
     class Meta:
@@ -17,4 +16,10 @@ class ProfessorsModels(models.Model):
 
     def __str__(self) -> str:
         return self.users.name
+    
+    def save(self, *args, **kwargs):
+        if not self.registration:
+            self.registration = self.random_number(6)
+
+        super().save(*args, **kwargs)
     
