@@ -12,3 +12,16 @@ class Common(models.Model):
 
     class Meta:
         abstract = True
+
+class EquivalenceCreditsHours(Common):
+
+    equivalence = models.IntegerField("Equivalência", default=15)
+    created_at = models.DateTimeField("Criado em", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Equivalência de Creditos/Horas"
+        verbose_name_plural = "Equivalências de Creditos/Horas"
+        ordering = ['equivalence']
+
+    def get_number_of_equivalence(self):
+        return int(self.equivalence)
