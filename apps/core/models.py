@@ -12,7 +12,7 @@ class Common(models.Model):
     class Meta:
         abstract = True
 
-class DateTime(models.Model):
+class TimeStampedMode(models.Model):
     created_at = models.DateTimeField("Criado em", auto_now_add=True)
     modified_at = models.DateTimeField("Modificado em", auto_now=True)
 
