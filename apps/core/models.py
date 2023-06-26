@@ -13,6 +13,13 @@ class Common(models.Model):
     class Meta:
         abstract = True
 
+class DateTime(models.Model):
+    created_at = models.DateTimeField("Criado em", auto_now_add=True)
+    modified_at = models.DateTimeField("Modificado em", auto_now=True)
+
+    class Meta:
+        abstract = True 
+
 class EquivalenceCreditsHours(Common):
 
     equivalence = models.IntegerField("Equivalência", default=15)
@@ -25,3 +32,4 @@ class EquivalenceCreditsHours(Common):
 
     def get_number_of_equivalence(self):
         return int(self.equivalence)
+    

@@ -1,7 +1,8 @@
 from django.db import models
 
-from apps.core.models import Common, EquivalenceCreditsHours
+from apps.core.models import Common, DateTime, EquivalenceCreditsHours
 from apps.institute.models import Courses
+
 # Create your models here.
 
 def get_object():
@@ -48,7 +49,7 @@ class LoadInternshipsCredits(AbstractClass):
     """
     pass 
     
-class Discipline(Common):
+class Discipline(Common, DateTime):
     
     name = models.CharField("Nome", max_length=200)
     course = models.ForeignKey(Courses, on_delete=models.PROTECT, verbose_name="Curso")
@@ -74,3 +75,16 @@ class Discipline(Common):
         return self.teoric_credits.get_credits_in_hours() + \
             self.pcc_credits.get_credits_in_hours() + \
             self.internship_credits.get_credits_in_hours()
+    
+class PreRequisite(Common, DateTime):
+    discipline = models.ForeignKey(Discipline, on_delete=models.PROTECT, related_name="discipline")
+    prerequisite = models.ForeignKey(Discipline, on_delete=models.PROTECT, related_name="prerequisiti")
+
+
+    class Meta:
+        verbose_name = 'Pré-Requisito'
+        verbose_name_plural = 'Pré-Requisitos'
+        ordering = ['discipline', 'prerequisite']
+
+    def __str__(self) -> str:
+        return f"{self.prerequisite} ({self.discipline})"

@@ -4,7 +4,8 @@ from django.test import TestCase
 from apps.core.models import EquivalenceCreditsHours
 from apps.institute.models import Courses, Departaments, Institute
 from apps.discipline.models import (LoadTeoricCredits, LoadPCCCredits,
-                                    LoadInternshipsCredits, Discipline)
+                                    LoadInternshipsCredits, Discipline,
+                                    PreRequisite)
 
 class LoadTeoricCreditsManagerTest(TestCase):
     def setUp(self) -> None:
@@ -125,3 +126,60 @@ class DisciplineManagerTest(TestCase):
 
     def test_get_hours_total(self):
         self.assertEqual(self.object.get_hour_total(), 12*15)
+
+class PreRequisiteManagerTest(TestCase):
+    
+    def setUp(self) -> None:
+        equivalence = EquivalenceCreditsHours.objects.create(
+                    equivalence = 15,
+                )
+        teoric = LoadTeoricCredits.objects.create(
+                quantity = 4,
+                equivalence_hours = equivalence
+        )
+        pcc = LoadPCCCredits.objects.create(
+                quantity = 4,
+                equivalence_hours = equivalence
+        )
+        internship = LoadInternshipsCredits.objects.create(
+                quantity = 4,
+                equivalence_hours = equivalence
+        )
+        institute = Institute.objects.create(
+            name = 'Teste',
+        )
+        dep = Departaments.objects.create(
+            short_name = "Teste",
+            institute = institute
+        )
+        courses = Courses.objects.create(
+            short_name = "Teste",
+            departament = dep, 
+        )
+
+        self.discipline = Discipline.objects.create(
+            name = "Teste",
+            course = courses,
+            teoric_credits = teoric,
+            pcc_credits = pcc,
+            internship_credits = internship
+        )
+
+        self.prerequisite = Discipline.objects.create(
+            name = "Prerequisito",
+            course = courses,
+            teoric_credits = teoric,
+            pcc_credits = pcc,
+            internship_credits = internship
+        )
+
+        self.object = PreRequisite.objects.create(
+            discipline = self.discipline,
+            prerequisite = self.prerequisite,
+        )
+    def test_create(self):
+        self.assertEquals(PreRequisite.objects.filter(prerequisite=self.prerequisite).exists(), True)
+
+    def test_equals(self):
+        self.assertEqual(self.object.discipline, self.discipline)
+        self.assertEqual(self.object.prerequisite, self.prerequisite)
