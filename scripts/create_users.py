@@ -2,7 +2,7 @@ import random
 from django.contrib.auth import get_user_model
 from django.utils.crypto import get_random_string
 
-Users = get_user_model()
+# Users = get_user_model()
 
 chars_password = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(_-=+)'
 chars_email = 'abcdefghijklmnopqrstuvwxyz'
@@ -67,4 +67,17 @@ def main():
     Users.objects.bulk_create(objs=entry)
 
 if __name__ == "__main__":
-    main()
+    print("[0] - Criar nome")
+    print("[1] - Criar password")
+    print("[2] - Criar email")
+    print("[3] - Criar cpf")
+
+    choice = 't'
+    while not choice.isnumeric():
+        choice = input("Escolha um dos itens: ")
+        
+        if not choice.isnumeric():
+            print("Escolha inválida!")
+    
+    if choice == "3":
+        print(create_cpf())
