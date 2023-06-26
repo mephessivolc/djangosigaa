@@ -116,6 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'apps.core.backends.EmailAuthBackend',
+    'apps.core.backends.DocumentAuthBackend',
     # 'allauth.account.auth_backends.AuthenticationBackend',
 )
 

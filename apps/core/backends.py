@@ -17,3 +17,17 @@ class EmailAuthBackend(DjangoModelBackend):
 
             except UserModel.DoesNotExist:
                 return None
+
+class DocumentAuthBackend(DjangoModelBackend):
+
+    def authenticate(self, request, username=None, password=None):
+        if not username is None:
+            UserModel = get_user_model()
+            try:
+                user = UserModel.objects.get(document=username)
+
+                if user.check_password(password):
+                    return user
+
+            except UserModel.DoesNotExist:
+                return None
