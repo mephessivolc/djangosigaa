@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.core.models import Common, TimeStampedMode, EquivalenceCreditsHours
+from apps.core.models import Common, TimeStampedModel, EquivalenceCreditsHours
 from apps.institute.models import Courses
 
 # Create your models here.
@@ -49,7 +49,7 @@ class LoadInternshipsCredits(AbstractClass):
     """
     pass 
     
-class Discipline(Common, TimeStampedMode):
+class Discipline(Common, TimeStampedModel):
     
     name = models.CharField("Nome", max_length=200)
     course = models.ForeignKey(Courses, on_delete=models.PROTECT, verbose_name="Curso")
@@ -76,7 +76,7 @@ class Discipline(Common, TimeStampedMode):
             self.pcc_credits.get_credits_in_hours() + \
             self.internship_credits.get_credits_in_hours()
     
-class PreRequisite(Common, TimeStampedMode):
+class PreRequisite(Common, TimeStampedModel):
     discipline = models.ForeignKey(Discipline, on_delete=models.PROTECT, related_name="discipline")
     prerequisite = models.ForeignKey(Discipline, on_delete=models.PROTECT, related_name="prerequisite")
 
