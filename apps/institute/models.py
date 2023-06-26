@@ -58,7 +58,7 @@ class Courses(Common):
         return f"{self.name}"
     
     def save(self, *args, **kwargs):
-        if not self.number:
+        if not self.number or self.number is "0000":
             self.number = random_number(4).zfill(4)
         
         return super().save(*args, **kwargs)
