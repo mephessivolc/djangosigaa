@@ -4,7 +4,6 @@ from django.template.defaultfilters import slugify
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from scripts.create_random import random_number
 import uuid
 
 from localflavor.br import models as localflavor_models
