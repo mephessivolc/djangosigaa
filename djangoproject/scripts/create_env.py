@@ -3,13 +3,21 @@
 """
     Django SECRET_KEY generator.
 """
+import os
 from django.utils.crypto import get_random_string
 
 chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(_-=+)'
 
+args = os.sys.argv
+
+if "-dev" in args: 
+    debug = False
+else:
+    debug = True 
+
 CONFIG_STRING = """
 ALLOWED_HOSTS=127.0.0.1, .localhost
-DEBUG=False
+DEBUG=%s
 SECRET_KEY=%s
 DATABASES=
 DB_NAME=
@@ -22,7 +30,7 @@ EMAIL_HOST =
 EMAIL_HOST_USER =
 EMAIL_HOST_PASSWORD =
 DEFAULT_FROM_EMAIL = 
-""".strip()%get_random_string(50, chars)
+""".strip()%(debug, get_random_string(50, chars))
 
 # Writing our configuration file to ".env"
 with open('.env', 'w') as configfiles:
